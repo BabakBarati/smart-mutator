@@ -12,8 +12,8 @@ namespace Smart_Mutator
         static void Main(string[] args)
         {
             var logParser = new MajorLogParser(@"C:\Users\Babak\Downloads\Telegram Desktop\mutants.log");
-            List<MajorLogItem> result = logParser.ParseLogFile();
-
+            //List<MajorLogItem> result = logParser.ParseLogFile();
+            logParser.SaveMutationLogList();
 
             System.Console.ReadLine();
         }

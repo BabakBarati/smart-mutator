@@ -4,15 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Smart_Mutator.Mutator;
 
 namespace Smart_Mutator.Log.Major
 {
     public class MajorLogParser
     {
         private readonly string _sourceFile;
+        private readonly List<MajorLogItem> _majorLogItems;
         public MajorLogParser(string sourceFile)
         {
             _sourceFile = sourceFile;
+            _majorLogItems = ParseLogFile();
         }
 
         public List<MajorLogItem> ParseLogFile()
@@ -22,7 +26,7 @@ namespace Smart_Mutator.Log.Major
             var result = new List<MajorLogItem>();
             while ((line = file.ReadLine()) != null)
             {
-                if(string.IsNullOrWhiteSpace(line))
+                if (string.IsNullOrWhiteSpace(line))
                     continue;
                 result.Add(new MajorLogItem(line));
             }
@@ -30,6 +34,40 @@ namespace Smart_Mutator.Log.Major
             file.Close();
 
             return result;
+        }
+
+        public List<MutationNode> CreateMutationNodeList()
+        {
+            var result = new List<MutationNode>();
+            //var lineNumbers = from m in _majorLogItems group m.LineNumber by m.LineNumber into grp select grp.Key;
+            var lineNumbers = _majorLogItems.GroupBy(m => m.LineNumber).Select(grp => grp.Key).OrderBy(l => l);
+
+            var index = 1;
+            foreach (var lineNumber in lineNumbers)
+            {
+                var mutations = _majorLogItems.Where(m => m.LineNumber == lineNumber);
+                var mutationNode = new MutationNode
+                {
+                    Id = index++,
+                    LineNumber = lineNumber,
+                    MutationList = mutations.Select(m => new MutationRecord
+                    {
+                        Id = m.Index,
+                        MutateFrom = m.MutateFrom,
+                        MutateTo = m.MutateTo,
+                        Operator = m.MutationOperator
+                    }).ToList()
+                };
+                result.Add(mutationNode);
+            }
+
+            return result;
+        }
+
+        public void SaveMutationLogList()
+        {
+            var json = JsonConvert.SerializeObject(CreateMutationNodeList(), Formatting.Indented);
+            System.IO.File.WriteAllText(@"WriteText.txt", json);
         }
     }
 }

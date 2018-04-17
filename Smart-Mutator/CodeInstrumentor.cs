@@ -19,7 +19,7 @@ namespace Smart_Mutator
             _sourceFile = sourceFile;
             _destinationFileName = destinationFile;
 
-            _logParser = new MajorLogParser(@"C:\Users\Babak\Downloads\Telegram Desktop\mutants.log");
+            _logParser = new MajorLogParser(_logFile);
             var majorLogItems = _logParser.ParseLogFile();
         }
 
@@ -30,6 +30,11 @@ namespace Smart_Mutator
             // inject line by line
 
             // close the file
+        }
+
+        public void CreateMutationList()
+        {
+
         }
     }
 }
