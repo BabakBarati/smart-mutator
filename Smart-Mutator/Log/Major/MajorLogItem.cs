@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Smart_Mutator.Mutator;
 
 namespace Smart_Mutator.Log.Major
 {
     public class MajorLogItem
     {
         public int Index { get; private set; }
-        public string MutationOperator { get; private set; }
+        public MuOp MutationOperator { get; private set; }
         public string OriginalOperatorSymbol { get; private set; }
         public string ReplacementOperatorSymbol { get; private set; }
         public string MutatedMethodSignature { get; private set; }
@@ -22,7 +19,8 @@ namespace Smart_Mutator.Log.Major
             var splitted = line.Split(':');
 
             Index = int.Parse(splitted[0]);
-            MutationOperator = splitted[1];
+            //MuOp.TryParse(splitted[1], out MutationOperator);
+            MutationOperator = (MuOp)Enum.Parse(typeof(MuOp), splitted[1]);
             OriginalOperatorSymbol = splitted[2];
             ReplacementOperatorSymbol = splitted[3];
             MutatedMethodSignature = splitted[4];

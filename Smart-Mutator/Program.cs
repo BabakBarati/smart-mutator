@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Smart_Mutator.Log.Major;
+using Smart_Mutator.Mutator;
 
 namespace Smart_Mutator
 {
@@ -15,7 +16,26 @@ namespace Smart_Mutator
             //List<MajorLogItem> result = logParser.ParseLogFile();
             logParser.SaveMutationLogList();
 
-            System.Console.ReadLine();
+            //var nodes = new List<MutationSpyNode>
+            //{
+            //    new MutationSpyNode
+            //    {
+            //        LineNumber = 10,
+            //        Id = 1,
+            //        MutationList = new List<MutationRecord>()
+            //    },
+            //    new MutationSpyNode
+            //    {
+            //        LineNumber = 10,
+            //        Id = 2,
+            //        MutationList = new List<MutationRecord>()
+            //    }
+            //};
+
+            //var mutator = new SmartMutator(nodes);
+
+            Console.Write("Press any key to close ...");
+            System.Console.ReadKey();
         }
     }
 }

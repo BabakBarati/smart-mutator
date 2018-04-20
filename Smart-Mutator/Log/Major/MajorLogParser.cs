@@ -1,9 +1,6 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Smart_Mutator.Mutator;
 
@@ -22,7 +19,7 @@ namespace Smart_Mutator.Log.Major
         public List<MajorLogItem> ParseLogFile()
         {
             var file = new System.IO.StreamReader(_sourceFile);
-            var line = "";
+            string line;
             var result = new List<MajorLogItem>();
             while ((line = file.ReadLine()) != null)
             {
@@ -67,7 +64,7 @@ namespace Smart_Mutator.Log.Major
         public void SaveMutationLogList()
         {
             var json = JsonConvert.SerializeObject(CreateMutationNodeList(), Formatting.Indented);
-            System.IO.File.WriteAllText(@"WriteText.txt", json);
+            System.IO.File.WriteAllText($@"Mutation_List_{DateTime.Now:yy-MM-dd_hh-mm-ss}.json", json);
         }
     }
 }

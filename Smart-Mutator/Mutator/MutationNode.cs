@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json.Converters;
 
 namespace Smart_Mutator.Mutator
 {
@@ -16,8 +14,16 @@ namespace Smart_Mutator.Mutator
     public class MutationRecord
     {
         public int Id { get; set; }
-        public string Operator { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public MuOp Operator { get; set; }
         public string MutateFrom  { get; set; }
         public string MutateTo { get; set; }
+    }
+
+    public class MutationSpyNode : MutationNode
+    {
+        public int TotalPassScore { get; set; }
+        public int DistinctPassScore { get; set; }
+        public int PriorScore { get; set; }
     }
 }
