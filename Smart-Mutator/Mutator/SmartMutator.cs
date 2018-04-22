@@ -19,21 +19,12 @@ namespace Smart_Mutator.Mutator
          */
         private readonly int _chromosomeLength;
 
-        // private current population
-        /*
-         *
-         */
-
-        // private method generate initial population
-        // private method compute fitness
-        // private method select
-        // private method corssover
-        // private method main cycle
         public SmartMutator(List<MutationSpyNode> nodes)
         {
             _nodes = nodes;
             _chromosomeLength = _nodes.Count;
 
+            Population = new Population(10, _chromosomeLength);
             throw new NotImplementedException();
         }
 
@@ -109,16 +100,16 @@ namespace Smart_Mutator.Mutator
         public int[] Genes { get; set; }
         private readonly int _chromosomeLength;
 
-        public Individual(int chromosomeLength)
+        private static readonly Random Random = new Random();
+        public Individual(IReadOnlyList<MutationSpyNode> nodes)
         {
-            _chromosomeLength = chromosomeLength;
-            Genes = new int[_chromosomeLength];
-        }
+            _chromosomeLength = nodes.Count;
+            //Genes = new int[_chromosomeLength];
 
-        public void Init()
-        {
-            // generate random chromosome
-            throw new NotImplementedException();
+            Genes = new int[_chromosomeLength];
+            //var random = new Random();
+            for (var i = 0; i < _chromosomeLength; i++)
+                Genes[i] = nodes[i].GenerateRandomGene(Random);
         }
 
         public double CalcFitness()
@@ -132,13 +123,21 @@ namespace Smart_Mutator.Mutator
 
     public class Population
     {
-        public int PopSize { get; set; }
+        public int PopSize { get; protected set; }
         public Individual[] Individuals;
         public double Fittest { get; set; }
 
-
-        public void InitializePopulation()
+        public Population(int size, List<MutationSpyNode> nodes)
         {
+            PopSize = size;
+            Individuals = new Individual[PopSize];
+            for (int i = 0; i < PopSize; i++)
+                Individuals[i] = new Individual(nodes);
+        }
+
+        public void InitializePopulation(int size)
+        {
+
             throw new NotImplementedException();
         }
 

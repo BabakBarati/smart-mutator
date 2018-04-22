@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json.Converters;
 
 namespace Smart_Mutator.Mutator
@@ -9,6 +11,14 @@ namespace Smart_Mutator.Mutator
         public int Id { get; set; }
         public int LineNumber { get; set; }
         public List<MutationRecord> MutationList{ get; set; }
+
+        public int GenerateRandomGene(Random random)
+        {
+            var possibleGenes = MutationList.Select(m => m.Id).ToList();
+            possibleGenes.Add(0);
+            var result = possibleGenes[random.Next(possibleGenes.Count)];
+            return result;
+        }
     }
 
     public class MutationRecord
