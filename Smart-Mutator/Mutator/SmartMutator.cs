@@ -24,8 +24,16 @@ namespace Smart_Mutator.Mutator
             _nodes = nodes;
             _chromosomeLength = _nodes.Count;
 
-            Population = new Population(10, _chromosomeLength);
+            Population = new Population(10, _nodes);
+
+            EvolutionCycle();
+
             throw new NotImplementedException();
+        }
+
+        public void EvolutionCycle()
+        {
+
         }
 
         public void Selection()
@@ -123,22 +131,20 @@ namespace Smart_Mutator.Mutator
 
     public class Population
     {
+        private readonly List<MutationSpyNode> _nodes;
         public int PopSize { get; protected set; }
         public Individual[] Individuals;
         public double Fittest { get; set; }
 
         public Population(int size, List<MutationSpyNode> nodes)
         {
+            _nodes = nodes;
             PopSize = size;
+
+            // initialize population
             Individuals = new Individual[PopSize];
-            for (int i = 0; i < PopSize; i++)
+            for (var i = 0; i < PopSize; i++)
                 Individuals[i] = new Individual(nodes);
-        }
-
-        public void InitializePopulation(int size)
-        {
-
-            throw new NotImplementedException();
         }
 
         public Individual GetFittest()
