@@ -32,8 +32,8 @@ namespace Smart_Mutator.Mutator
 
     public class MutationSpyNode : MutationNode
     {
-        public int TotalPassScore { get; set; }
-        public int DistinctPassScore { get; set; }
-        public int PriorScore { get; set; }
+        public uint TotalPassScore { get; set; }
+        public uint DistinctPassScore { get; set; }
+        public uint PriorScore { get; set; }
     }
 }

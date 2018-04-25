@@ -107,10 +107,12 @@ namespace Smart_Mutator.Mutator
         public double Fitness { get; set; }
         public int[] Genes { get; set; }
         private readonly int _chromosomeLength;
+        protected static IReadOnlyList<MutationSpyNode> Nodes;
 
         private static readonly Random Random = new Random();
         public Individual(IReadOnlyList<MutationSpyNode> nodes)
         {
+            Nodes = nodes;
             _chromosomeLength = nodes.Count;
             //Genes = new int[_chromosomeLength];
 
@@ -123,7 +125,20 @@ namespace Smart_Mutator.Mutator
         public double CalcFitness()
         {
             double result = 0;
-            // calc
+            var mutatedCount = 0;
+            for (var i = 0; i < _chromosomeLength; i++)
+            {
+                var gene = Genes[i];
+                if (gene == 0)
+                    continue;
+                mutatedCount++;
+                result += 1 / ((1 + (double)Nodes[i].PriorScore) * (1 + (double)Nodes[i].DistinctPassScore));
+            }
+
+            if(mutatedCount == 0)
+                return Fitness = 0.0;
+
+            return Fitness = result / mutatedCount;
             throw new NotImplementedException();
             return Fitness = result;
         }
