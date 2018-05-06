@@ -35,5 +35,17 @@ namespace Smart_Mutator.Mutator
         public uint TotalPassScore { get; set; }
         public uint DistinctPassScore { get; set; }
         public uint PriorScore { get; set; }
+
+        public int PresentScore { get; set; }
+        public int MeanMeetScore { get; set; }
+        public int BranchFactor { get; set; }
+        public int RelativeBranchFactor { get; set; }
+        public int DepthScore { get; set; }
+
+        public double NIPS { get; set; }
+        public double NIMMS { get; set; }
+        public double NIBF { get; set; }
+        public double NIRBF { get; set; }
+        public double NIDS { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Smart_Mutator.Mutator
@@ -24,20 +24,46 @@ namespace Smart_Mutator.Mutator
             _nodes = nodes;
             _chromosomeLength = _nodes.Count;
 
-            Population = new Population(10, _nodes);
+            //Initialize population
+            Population = new Population(14, _nodes);
+
+            //Calculate fitness of each individual
+            Population.CalculateFitness();
 
             EvolutionCycle();
 
-            throw new NotImplementedException();
+            var finalResult = string.Join(", ", Population.GetFittest().Genes.Where(g => g != 0));
+            Console.WriteLine($"Final Result Mutations: {finalResult}");
         }
 
         public void EvolutionCycle()
         {
+            var random = new Random();
 
+            Console.WriteLine($"#Generation: {GenerationCount}, Fittest: {Population.Fittest}\nGenes: {string.Join(", ", Population.GetFittest().Genes)}");
+            //while (GenerationCount < 10000)
+            while (GenerationCount < 100)
+            //while (Population.Fittest < 4.2)
+            {
+                GenerationCount++;
+
+                Selection();
+
+                CrossOver();
+
+                if (random.Next(100) <= 50)
+                    Mutation();
+
+                AddFittestOffspring();
+
+                Population.CalculateFitness();
+                Console.WriteLine($"#Generation: {GenerationCount}, Fittest: {Population.Fittest}\nGenes: {string.Join(", ", Population.GetFittest().Genes)}");
+            }
         }
 
         public void Selection()
         {
+            var fittest = Population.GetFittest();
             Fittest = Population.GetFittest();
             SecondFittest = Population.GetSecondFittest();
         }
@@ -47,7 +73,7 @@ namespace Smart_Mutator.Mutator
             var rnd = new Random();
             //select a random crossover point
             var crossOverPoint = rnd.Next(_chromosomeLength);
-
+            var a = Population.PopSize;
             //Swap values among parents
             for (var i = 0; i < crossOverPoint; i++)
             {
@@ -92,7 +118,7 @@ namespace Smart_Mutator.Mutator
         }
 
         //Replace least fittest individual from most fittest offspring
-        public void AddFittestOfspring()
+        public void AddFittestOffspring()
         {
             Fittest.CalcFitness();
             SecondFittest.CalcFitness();
@@ -126,20 +152,36 @@ namespace Smart_Mutator.Mutator
         {
             double result = 0;
             var mutatedCount = 0;
+            var operators = new List<MuOp>();
+            var mutants = Genes.Where(g => g != 0).ToArray();
+
+            foreach (var node in Nodes)
+            {
+                var mutant = node.MutationList.FirstOrDefault(m => mutants.Contains(m.Id));
+
+                if (mutant != null) operators.Add(mutant.Operator);
+            }
+
             for (var i = 0; i < _chromosomeLength; i++)
             {
                 var gene = Genes[i];
                 if (gene == 0)
                     continue;
                 mutatedCount++;
-                result += 1 / ((1 + (double)Nodes[i].PriorScore) * (1 + (double)Nodes[i].DistinctPassScore));
+                //result += 1 / ((1 + (double)Nodes[i].PriorScore) * (1 + (double)Nodes[i].DistinctPassScore));
+                var node = Nodes[i];
+                result += node.NIPS + node.NIMMS + node.NIBF + node.NIRBF + node.NIDS;
             }
 
-            if(mutatedCount == 0)
+            if (mutatedCount == 0)
                 return Fitness = 0.0;
 
-            return Fitness = result / mutatedCount;
-            throw new NotImplementedException();
+            // f2
+            result /= mutatedCount;
+
+            // f3
+            result += 2 * Math.Min(0.0, (double) mutatedCount / _chromosomeLength - 0.5) + (double)operators.Distinct().Count() / mutatedCount;
+
             return Fitness = result;
         }
     }
@@ -164,37 +206,52 @@ namespace Smart_Mutator.Mutator
 
         public Individual GetFittest()
         {
-            var maxFit = double.NegativeInfinity;
-            var maxFitIndex = 0;
-            for (var i = 0; i < Individuals.Length; i++)
+            //var maxFit = double.NegativeInfinity;
+            //var maxFitIndex = 0;
+            //for (var i = 0; i < Individuals.Length; i++)
+            //{
+            //    if (maxFit <= Individuals[i].Fitness)
+            //    {
+            //        maxFit = Individuals[i].Fitness;
+            //        maxFitIndex = i;
+            //    }
+            //}
+            //Fittest = Individuals[maxFitIndex].Fitness;
+            //Console.WriteLine($"max fit index: {maxFitIndex}");
+            //return Individuals[maxFitIndex];
+            var fittest = Individuals.OrderByDescending(i => i.Fitness).FirstOrDefault();
+            Fittest = fittest.Fitness;
+            return new Individual(_nodes)
             {
-                if (maxFit <= Individuals[i].Fitness)
-                {
-                    maxFit = Individuals[i].Fitness;
-                    maxFitIndex = i;
-                }
-            }
-            Fittest = Individuals[maxFitIndex].Fitness;
-            return Individuals[maxFitIndex];
+                Fitness = fittest.Fitness,
+                Genes = fittest.Genes.ToArray()
+            };
         }
 
         public Individual GetSecondFittest()
         {
-            var maxFitIndex1 = 0;
-            var maxFitIndex2 = 0;
-            for (var i = 0; i < Individuals.Length; i++)
+            //var maxFitIndex1 = 0;
+            //var maxFitIndex2 = 0;
+            //for (var i = 0; i < Individuals.Length; i++)
+            //{
+            //    if (Individuals[i].Fitness > Individuals[maxFitIndex1].Fitness)
+            //    {
+            //        maxFitIndex2 = maxFitIndex1;
+            //        maxFitIndex1 = i;
+            //    }
+            //    else if (Individuals[i].Fitness > Individuals[maxFitIndex2].Fitness)
+            //    {
+            //        maxFitIndex2 = i;
+            //    }
+            //}
+            //Console.WriteLine($"second max fit index: {maxFitIndex2}");
+            //return Individuals[maxFitIndex2];
+            var secondFittest = Individuals.OrderByDescending(i => i.Fitness).Skip(1).FirstOrDefault();
+            return new Individual(_nodes)
             {
-                if (Individuals[i].Fitness > Individuals[maxFitIndex1].Fitness)
-                {
-                    maxFitIndex2 = maxFitIndex1;
-                    maxFitIndex1 = i;
-                }
-                else if (Individuals[i].Fitness > Individuals[maxFitIndex2].Fitness)
-                {
-                    maxFitIndex2 = i;
-                }
-            }
-            return Individuals[maxFitIndex2];
+                Fitness = secondFittest.Fitness,
+                Genes = secondFittest.Genes.ToArray()
+            };
         }
 
         public int GetLeastFittestIndex()

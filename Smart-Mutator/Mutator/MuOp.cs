@@ -28,6 +28,17 @@ namespace Smart_Mutator.Mutator
         [EnumMember(Value = "LVR")]
         LVR = 8,
         [EnumMember(Value = "STD")]
-        STD = 9
+        STD = 9,
+        // -----------------------------
+        [EnumMember(Value = "ABS")]
+        ABS = 10,
+        [EnumMember(Value = "UOI")]
+        UOI = 11,
+        [EnumMember(Value = "SVR")]
+        SVR = 12,
+        [EnumMember(Value = "UOD")]
+        UOD = 13,
+        [EnumMember(Value = "ASR")]
+        ASR = 14
     }
 }
